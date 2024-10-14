@@ -15,7 +15,6 @@ export const action = async ({
   request,
 }: ActionFunctionArgs) => {
 
-  console.log('in prog')
   const session = await getSession(
     request.headers.get("Cookie")
   );
@@ -62,13 +61,6 @@ export const action = async ({
         },
       ]
       const projectDetails = await createProject(session.get('accessToken') as string, session.get('organizationUid') as string, envVariables);
-
-
-      // const projectDetails: LaunchProjectDetails = {
-      //   projectUid: 'projectUid',
-      //   environmentUid: 'environmentUid',
-      //   deploymentUid: 'deploymentUid',
-      // };
 
       session.set('launchProjectDetails', projectDetails);
 

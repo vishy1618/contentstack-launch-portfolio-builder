@@ -33,11 +33,9 @@ export async function createProject(
   headers.append('Content-Type', 'application/json');
 
   const signedUploadUrl = await getPresiginedUrl(accessToken, organizationUid);
-  const uploadResult = await uploadProjectFile(signedUploadUrl);
-  // const createLaunchProjectResult = await createLaunchProject(accessToken, organizationUid, signedUploadUrl.uploadUid, environmentVariables);
-
-
-  return {} as LaunchProjectDetails;
+  await uploadProjectFile(signedUploadUrl);
+  const launchProjectDetails = await createLaunchProject(accessToken, organizationUid, signedUploadUrl.uploadUid, environmentVariables);
+  return launchProjectDetails;
 }
 
 async function getPresiginedUrl(accessToken: string, organizationUid: string): Promise<SignedUploadUrl> {
@@ -108,7 +106,7 @@ async function uploadProjectFile(signedUploadUrl: SignedUploadUrl) {
   }
 }
 
-async function createLaunchProject(accessToken: string, organizationUid: string, uploadUid: string, environmentVariables: EnvironmentVariables) {
+async function createLaunchProject(accessToken: string, organizationUid: string, uploadUid: string, environmentVariables: EnvironmentVariables):Promise<LaunchProjectDetails> {
   const headers = {
     'Authorization': `Bearer ${accessToken}`,
     'content-type': 'application/json',
@@ -131,7 +129,7 @@ async function createLaunchProject(accessToken: string, organizationUid: string,
             buildCommand: "npm run build",
             outputDirectory: "./build",
             environmentVariables: [
-              ${environmentVariables.map(({ key, value }) => `{ "key": "${key}", "value": "${value}" }`).join(", ")}
+              ${environmentVariables.map(({ key, value }) => `{ key: "${key}", value: "${value}" }`).join(", ")}
             ],
             serverCommand: "npm run start"
           }
@@ -159,20 +157,19 @@ async function createLaunchProject(accessToken: string, organizationUid: string,
     headers: headers,
     body: body
   };
-  console.log(JSON.stringify(requestOptions))
   try {
-    console.log("000")
     const response = await fetch(`${CONTENTSTACK_LAUNCH_API_URL}/manage/graphql`, requestOptions);
 
-    console.log(0)
-    const responseBody = await response.text();
-    console.log(responseBody)
     if (!response.ok) {
       throw new Error(`Failed to create project: ${response.statusText}`);
     }
 
-    console.log(1)
-    // return responseBody.data.importProject;
+    const responseBody = await response.json();
+    return {
+      projectUid: responseBody.data.importProject.uid,
+      environmentUid: responseBody.data.importProject.environments[0].uid,
+      deploymentUid: responseBody.data.importProject.environments[0].deployments.edges[0].node.uid
+    };
   } catch (error) {
     console.error("Project creation error", error);
     throw error;
