@@ -4,7 +4,7 @@ import { StackDetails } from './sessions';
 export type QuestionAnswers = {
   name: string;
   description: string;
-  dp: File;
+  dp: any;
   designation: string;
   x: string;
   linkedin: string;

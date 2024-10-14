@@ -9,10 +9,13 @@ import {
   ActionFunctionArgs,
   json,
 } from '@remix-run/node';
+import { createProject, EnvironmentVariables } from '~/launch-repository';
 
 export const action = async ({
   request,
 }: ActionFunctionArgs) => {
+
+  console.log('in prog')
   const session = await getSession(
     request.headers.get("Cookie")
   );
@@ -28,17 +31,44 @@ export const action = async ({
           status: 400,
         });
       }
+      const envVariables: EnvironmentVariables = [
+        {
+          key: 'DEFAULT_THEME',
+          value: 'light'
+        },
+        {
+          key: 'CONTENTSTACK_API_KEY',
+          value: 'blt9a981b9220f1a836',
+        },
+        {
+          key: 'CONTENTSTACK_DELIVERY_TOKEN',
+          value: 'cs4e38f11298b815bd08ce52b0',
+        },
+        {
+          key: 'CONTENTSTACK_ENVIRONMENT',
+          value: 'production',
+        },
+        {
+          key: 'CONTENTSTACK_CONTENT_TYPE',
+          value: 'portfolio',
+        },
+        {
+          key: 'CONTENTSTACK_ENTRY_UID',
+          value: 'blt0cbc3d310e173b7e',
+        },
+        {
+          key: 'CONTENTSTACK_ASSET_UID',
+          value: 'blte69f1ec4a2912c2e',
+        },
+      ]
+      const projectDetails = await createProject(session.get('accessToken') as string, session.get('organizationUid') as string, envVariables);
 
-      // TODO: create Launch project
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2000);
-      });
 
-      const projectDetails: LaunchProjectDetails = {
-        projectUid: 'projectUid',
-        environmentUid: 'environmentUid',
-        deploymentUid: 'deploymentUid',
-      };
+      // const projectDetails: LaunchProjectDetails = {
+      //   projectUid: 'projectUid',
+      //   environmentUid: 'environmentUid',
+      //   deploymentUid: 'deploymentUid',
+      // };
 
       session.set('launchProjectDetails', projectDetails);
 
