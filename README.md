@@ -1,10 +1,15 @@
-# Welcome to Remix!
+# Contentstack Launch Portfolio Builder
 
-- 📖 [Remix docs](https://remix.run/docs)
+A starter app that builds a portfolio website by asking a few basic questions. Intended for use at conferences like React India. Built with [Remix](https://remix.run/).
 
 ## Development
 
-Run the dev server:
+### Environment variables
+Copy the `sample-env` file to `.env` for the sample environment variables to be populated. The environment variables are all obtained by creating a DeveloperHub OAuth app.
+
+### Running the server:
+
+Next, run the dev server:
 
 ```shellscript
 npm run dev
@@ -23,18 +28,3 @@ Then run the app in production mode:
 ```sh
 npm start
 ```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
