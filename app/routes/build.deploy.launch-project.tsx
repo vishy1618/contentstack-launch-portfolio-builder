@@ -1,7 +1,6 @@
 import {
   commitSession,
   getSession,
-  LaunchProjectDetails,
   SessionProgress,
 } from '~/sessions';
 
@@ -10,6 +9,7 @@ import {
   json,
 } from '@remix-run/node';
 import { createProject, EnvironmentVariables } from '~/launch-repository';
+import { LAUNCH_PROJECT_THEMES } from '~/constants';
 
 export const action = async ({
   request,
@@ -30,37 +30,37 @@ export const action = async ({
           status: 400,
         });
       }
-      const envVariables: EnvironmentVariables = [
+      const environmentVariables: EnvironmentVariables = [
         {
           key: 'DEFAULT_THEME',
-          value: 'light'
+          value: LAUNCH_PROJECT_THEMES[Math.floor(Math.random() * LAUNCH_PROJECT_THEMES.length)]
         },
         {
           key: 'CONTENTSTACK_API_KEY',
-          value: 'blt9a981b9220f1a836',
+          value: session.get('stackDetails')?.apiKey as string,
         },
         {
           key: 'CONTENTSTACK_DELIVERY_TOKEN',
-          value: 'cs4e38f11298b815bd08ce52b0',
+          value: session.get('stackDetails')?.deliveryToken as string,
         },
         {
           key: 'CONTENTSTACK_ENVIRONMENT',
-          value: 'production',
+          value: session.get('stackDetails')?.environment as string,
         },
         {
           key: 'CONTENTSTACK_CONTENT_TYPE',
-          value: 'portfolio',
+          value: session.get('contentDetails')?.contentType as string,
         },
         {
           key: 'CONTENTSTACK_ENTRY_UID',
-          value: 'blt0cbc3d310e173b7e',
+          value: session.get('contentDetails')?.entryUid as string,
         },
         {
           key: 'CONTENTSTACK_ASSET_UID',
-          value: 'blte69f1ec4a2912c2e',
+          value: session.get('contentDetails')?.assetUid as string,
         },
       ]
-      const projectDetails = await createProject(session.get('accessToken') as string, session.get('organizationUid') as string, envVariables);
+      const projectDetails = await createProject(session.get('accessToken') as string, session.get('organizationUid') as string, environmentVariables);
 
       session.set('launchProjectDetails', projectDetails);
 

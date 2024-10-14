@@ -12,6 +12,12 @@ export type StackDetails = {
   environment: string;
 };
 
+export type ContentDetails = {
+  contentType: string;
+  entryUid: string;
+  assetUid: string;
+}
+
 export enum DeploymentStatus {
   QUEUED = 'QUEUED',
   LIVE = 'LIVE',
@@ -36,6 +42,7 @@ type SessionData = {
   progress: SessionProgress;
   stackDetails: StackDetails;
   launchProjectDetails: LaunchProjectDetails;
+  contentDetails: ContentDetails;
 };
 
 type SessionFlashData = {
