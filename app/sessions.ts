@@ -4,7 +4,7 @@ export enum SessionProgress {
   QUESTIONS,
   DEPLOYMENT,
   COMPLETED,
-};
+}
 
 export type StackDetails = {
   apiKey: string;
@@ -12,11 +12,11 @@ export type StackDetails = {
   environment: string;
 };
 
-export type ContentDetails = {
+export type ContentTypeDetails = {
   contentType: string;
   entryUid: string;
   assetUid: string;
-}
+};
 
 export enum DeploymentStatus {
   QUEUED = 'QUEUED',
@@ -27,7 +27,7 @@ export enum DeploymentStatus {
   SKIPPED = 'SKIPPED',
   FAILED = 'FAILED',
   CANCELLED = 'CANCELLED',
-};
+}
 
 export type LaunchProjectDetails = {
   projectUid: string;
@@ -41,6 +41,7 @@ type SessionData = {
   organizationUid: string;
   progress: SessionProgress;
   stackDetails: StackDetails;
+  contentDetails: ContentTypeDetails;
   launchProjectDetails: LaunchProjectDetails;
   contentDetails: ContentDetails;
 };

@@ -1,5 +1,7 @@
+/* eslint-disable no-case-declarations */
 import {
   commitSession,
+  ContentTypeDetails,
   getSession,
   SessionProgress,
   StackDetails,
@@ -18,10 +20,13 @@ import {
   useActionData,
   useNavigation,
 } from '@remix-run/react';
+import { createPortfolioContentType, createDeliveryTokenForEnvironment, createEntryForPortfolioContentType, createEnvironment, createPortfolioWebsiteStack, QuestionAnswers } from '~/stack-repository';
+import { PORTFOLIO_CONTENT_TYPE_UID, STACK_ENVIRONMENT } from '~/constants';
 
 const SUBMIT_QUESTIONS = 'SUBMIT_QUESTIONS';
 const FIVE_MB = 5242880;
 const MAX_NAME_LENGTH = 200;
+const MAX_DESIGNATION_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 500;
 
 export default function Questions() {
@@ -29,6 +34,7 @@ export default function Questions() {
   const navigation = useNavigation();
   const isLoading = navigation.state === 'loading' || navigation.state === 'submitting';
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validateFileSize = (event: any) => {
     if (event.target.files[0].size > FIVE_MB) {
       event.target.value = '';
@@ -51,6 +57,21 @@ export default function Questions() {
         />
         {actionData?.errors?.name ? (
           <em className="text-red-500">{actionData?.errors.name}</em>
+        ) : null}
+      </div>
+
+      <div>
+        <label className="sr-only" htmlFor="designation">Designation</label>
+        <input
+          className="w-full rounded-lg border-gray-200 p-3 text-sm"
+          placeholder="Designation"
+          type="text"
+          id="designation"
+          name="designation"
+          maxLength={MAX_DESIGNATION_LENGTH}
+        />
+        {actionData?.errors?.designation ? (
+          <em className="text-red-500">{actionData?.errors.designation}</em>
         ) : null}
       </div>
 
@@ -192,28 +213,54 @@ export async function action({ request }: { request: Request }) {
         return json({ errors });
       }
 
-      // TODO:
-      // save stack
-      //
-      // save content type
+      const accessToken = session.get('accessToken') as string;
+      const organizationUid = session.get('organizationUid') as string;
+      const environmentName = STACK_ENVIRONMENT;
+      const portfolioContentTypeUid = PORTFOLIO_CONTENT_TYPE_UID;
+
+      const portfolioQuestionsAnswers: QuestionAnswers = {
+        name: formData.get('name') as string,
+        designation: formData.get('designation') as string,
+        description: formData.get('description') as string,
+        // dp?: File; // TODO
+        x: formData.get('x') as string,
+        linkedin: formData.get('linkedin') as string,
+        github: formData.get('github') as string,
+      };
+
+      // create stack
+      const apiKey = await createPortfolioWebsiteStack(accessToken, organizationUid);
+      
+      // create content type
       // create environment
-      //
-      // save entry
+      await Promise.all([
+        createPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid),
+        createEnvironment(accessToken, apiKey, environmentName),
+      ]);
+
+      // create delivery token
+      // create entry
       // save asset
-      // save delivery token
-      const promise = new Promise((resolve) => {
-        setTimeout(resolve, 5000);
-      });
-      await promise;
+      const [ deliveryToken, entryUid ] = await Promise.all([
+        createDeliveryTokenForEnvironment(accessToken, apiKey, environmentName),
+        createEntryForPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid, environmentName, portfolioQuestionsAnswers),
+      ]);
 
       const stackDetails: StackDetails = {
-        apiKey: 'apiKey',
-        deliveryToken: 'deliveryToken',
-        environment: 'environment',
+        apiKey,
+        deliveryToken,
+        environment: environmentName,
+      };
+
+      const contentDetails: ContentTypeDetails = {
+        contentType: portfolioContentTypeUid,
+        entryUid,
+        assetUid: 'WIP',
       };
 
       session.set('progress', SessionProgress.DEPLOYMENT);
       session.set('stackDetails', stackDetails);
+      session.set('contentDetails', contentDetails);
 
       return redirect('/build/deploy', {
         headers: {
@@ -226,6 +273,7 @@ export async function action({ request }: { request: Request }) {
 function validateData(formData: FormData): Record<string, string> {
   const errors: Record<string, string> = {};
   const name = String(formData.get('name') || '');
+  const designation = String(formData.get('designation') || '');
   const description = String(formData.get('description') || '');
   const linkedin = String(formData.get('linkedin') || '');
   const github = String(formData.get('github') || '');
@@ -235,12 +283,20 @@ function validateData(formData: FormData): Record<string, string> {
     errors.name = 'Name is required';
   }
 
+  if (!(designation.trim().length > 0)) {
+    errors.name = 'Designation is required';
+  }
+
   if (!(description.trim().length > 0)) {
     errors.description = 'Description is required';
   }
 
   if (name.length > MAX_NAME_LENGTH) {
     errors.name = `Name is longer than ${MAX_NAME_LENGTH} characters`;
+  }
+
+  if (designation.length > MAX_DESIGNATION_LENGTH) {
+    errors.name = `Designation is longer than ${MAX_DESIGNATION_LENGTH} characters`;
   }
 
   if (description.length > MAX_DESCRIPTION_LENGTH) {
