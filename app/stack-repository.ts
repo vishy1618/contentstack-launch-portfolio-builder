@@ -3,7 +3,7 @@ import { CONTENTSTACK_API_URL } from './constants';
 export type QuestionAnswers = {
   name: string;
   description: string;
-  dp: any;
+  dp?: File;
   designation: string;
   x?: string;
   linkedin?: string;
