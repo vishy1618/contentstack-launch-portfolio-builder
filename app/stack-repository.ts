@@ -1,9 +1,12 @@
 import { CONTENTSTACK_API_URL } from './constants';
+import FormData from "form-data";
+import axios from "axios";
+import fs from "fs";
 
 export type QuestionAnswers = {
   name: string;
   description: string;
-  dp?: File;
+  dp: string;
   designation: string;
   x?: string;
   linkedin?: string;
@@ -138,6 +141,20 @@ export async function createPortfolioContentType(
           unique: false,
           mandatory: false,
           multiple: false,
+        },
+        {
+          data_type: "file",
+          display_name: "Display Picture",
+          uid: "dp",
+          extensions: [],
+          field_metadata: {
+            description: "",
+            rich_text_type: "standard",
+          },
+          mandatory: false,
+          multiple: false,
+          non_localizable: false,
+          unique: false,
         },
       ],
       options: {
@@ -277,6 +294,47 @@ export async function createDeliveryTokenForEnvironment(
   }
 
   return deliveryToken;
+}
+
+export async function uploadFileToAssets(
+  accessToken: string,
+  apiKey: string,
+  dpFilePath: string
+): Promise<string> {
+  console.log("Uploading asset");
+  let assetUid = '';
+
+  const formData = new FormData();
+  console.log('Before appending file');
+  formData.append("asset[upload]", fs.createReadStream(dpFilePath));
+  console.log('After appending file');
+
+  // console.log(JSON.stringify(dp));
+
+  const headers = {
+    ...formData.getHeaders(),
+    api_key: apiKey,
+    Authorization: `Bearer ${accessToken}`,
+    "cache-control": "no-cache",
+  };
+
+  try {
+    const response = await axios.post(
+      `${CONTENTSTACK_API_URL}/v3/assets`,
+      formData,
+      {
+        headers,
+      }
+    );
+    console.log("Response from Asset APi", response.data);
+    console.log("Asset uploaded successfully");
+    assetUid = response.data.asset.uid;
+  } catch (error) {
+    console.error("Error uploading asset:", error);
+    throw error;
+  }
+
+  return assetUid;
 }
 
 export async function createEntryForPortfolioContentType(
