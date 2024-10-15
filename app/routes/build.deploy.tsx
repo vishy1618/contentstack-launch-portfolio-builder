@@ -14,7 +14,7 @@ enum LaunchProjectState {
   DEPLOYING,
   LIVE,
   ERROR,
-};
+}
 
 const TEXT_FOR_STATE: Record<LaunchProjectState, string> = {
   [LaunchProjectState.NOT_DEPLOYED]: '⏳ Creating Launch project',
@@ -97,5 +97,5 @@ export async function loader({ request }: { request: Request }) {
       return;
     }
   }
-  return { state, duration: tempDuration+POLLING_INTERVAL_SECONDS };
+    return { state, duration: tempDuration+=POLLING_INTERVAL_SECONDS };
 }
