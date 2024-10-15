@@ -246,7 +246,7 @@ export async function action({ request }: { request: Request }) {
       const [ , , dpAssetUid ] = await Promise.all([
         createPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid),
         createEnvironment(accessToken, apiKey, environmentName),
-        uploadDPFileToAssets(accessToken, apiKey, portfolioQuestionsAnswers.dp),
+        uploadDPFileToAssets(accessToken, apiKey, portfolioQuestionsAnswers.dp, environmentName),
       ]);
 
       // create delivery token

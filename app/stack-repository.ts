@@ -299,7 +299,8 @@ export async function createDeliveryTokenForEnvironment(
 export async function uploadDPFileToAssets(
   accessToken: string,
   apiKey: string,
-  dpFilePath: string
+  dpFilePath: string,
+  environmentName: string,
 ): Promise<string> {
   console.log("Uploading asset");
   let assetUid = '';
@@ -329,6 +330,8 @@ export async function uploadDPFileToAssets(
     console.error("Error uploading asset:", error);
     throw error;
   }
+
+  await publishAsset(accessToken, apiKey, environmentName, assetUid);
 
   return assetUid;
 }
@@ -433,4 +436,52 @@ async function publishEntry(
     throw error;
   }
 }
+
+async function publishAsset(
+  accessToken: string,
+  apiKey: string,
+  environmentName: string,
+  assetUid: string
+): Promise<void> {
+  console.log("Publishing Asset");
+
+  const myHeaders = new Headers();
+  myHeaders.append("api_key", apiKey);
+  myHeaders.append('Authorization', `Bearer ${accessToken}`);
+  myHeaders.append("Content-Type", "application/json");
+
+  /*
+    { "asset": { "locales": [ "en-us" ], "environments": [ "development" ] }, "version": 1, "scheduled_at": "2019-02-08T18:30:00.000Z" }
+  */
+
+  const publishAssetBody = JSON.stringify({
+    asset: {
+      environments: [environmentName],
+      locales: ["en-us"],
+    },
+    version: 1,
+  });
+
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: publishAssetBody
+  };
+
+  try {
+    const response = await fetch(
+      `${CONTENTSTACK_API_URL}/v3/assets/${assetUid}/publish`,
+      requestOptions
+    );
+    const result = await response.json();
+    if (!response.ok) {
+      throw result;
+    }
+    console.log("Asset Published");
+  } catch (error) {
+    console.error("Asset Publishing error", error);
+    throw error;
+  }
+}
+
 
