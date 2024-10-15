@@ -43,7 +43,6 @@ type SessionData = {
   stackDetails: StackDetails;
   contentDetails: ContentTypeDetails;
   launchProjectDetails: LaunchProjectDetails;
-  contentDetails: ContentDetails;
 };
 
 type SessionFlashData = {

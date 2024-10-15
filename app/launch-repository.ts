@@ -175,3 +175,95 @@ async function createLaunchProject(accessToken: string, organizationUid: string,
     throw error;
   }
 }
+
+export async function fetchUrls(
+  accessToken: string,
+  organizationUid: string,
+  environmentUid: string,
+  projectUid: string
+): Promise<{deploymentUrl: string, previewUrl: string}> {
+  const headers = {
+    'Authorization': `Bearer ${accessToken}`,
+    'content-type': 'application/json',
+    'organization_uid': organizationUid,
+    'x-project-uid': projectUid
+  };
+
+  const body = JSON.stringify({
+    operationName: "getDeployments",
+    variables: {},
+    query: `query getDeployments {
+      latestLiveDeployment(query: {environment: "${environmentUid}"}) {
+        previewUrl,
+        deploymentUrl
+      }
+    }`
+  });
+
+  try {
+    const response = await fetch(
+      `${CONTENTSTACK_LAUNCH_API_URL}/manage/graphql`, {
+      method: 'POST',
+      headers: headers,
+      body: body
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch deployment details: ${response.statusText}`);
+    }
+
+    const responseBody = await response.json();
+    console.log(JSON.stringify(responseBody));
+    return {
+      previewUrl: responseBody?.data?.latestLiveDeployment?.previewUrl,
+      deploymentUrl: `https://${responseBody?.data?.latestLiveDeployment?.deploymentUrl}`,
+    }
+  } catch (error) {
+    console.error("Error fetching deployment details", error);
+    throw error;
+  }
+}
+
+export async function fetchDeploymentStatus(
+  accessToken: string,
+  organizationUid: string,
+  environmentUid: string,
+  projectUid: string
+): Promise<string> {
+  const headers = {
+    'Authorization': `Bearer ${accessToken}`,
+    'content-type': 'application/json',
+    'organization_uid': organizationUid,
+    'x-project-uid': projectUid
+  }
+
+  const body = JSON.stringify({
+    operationName: "getDeployments",
+    variables: {},
+    query: `query getDeployments {
+      latestLiveDeployment(query: {environment: "${environmentUid}"}) {
+        status,
+      }
+    }`
+  });
+
+  try {
+    const response = await fetch(
+      `${CONTENTSTACK_LAUNCH_API_URL}/manage/graphql`, {
+      method: 'POST',
+      headers: headers,
+      body: body
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch deployment status: ${response.statusText}`);
+    }
+
+    const responseBody = await response.json();
+    console.log(JSON.stringify(responseBody));
+    return responseBody?.data?.latestLiveDeployment?.status;
+  } catch (error) {
+    console.error("Error fetching deployment details", error);
+    throw error;
+  }
+}

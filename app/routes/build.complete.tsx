@@ -6,6 +6,7 @@ import {
   redirect,
   useLoaderData,
 } from '@remix-run/react';
+import { fetchUrls } from '~/launch-repository';
 
 export default function Complete() {
   const {
@@ -72,24 +73,15 @@ export async function loader({ request }: { request: Request }) {
 
   const stackApiKey = session.get('stackDetails')?.apiKey;
   const launchProjectUid = session.get('launchProjectDetails')?.projectUid;
+  const launchEnvUid = session.get('launchProjectDetails')?.environmentUid;
   const stackUrl = `${CONTENTSTACK_APP_URL}/#!/stack/${stackApiKey}/dashboard`;
   const launchProjectUrl = `${CONTENTSTACK_APP_URL}/#!/launch/projects/${launchProjectUid}/envs`;
-  let previewUrl = null;
 
-  // TODO: fetch deployment details
-  const random = randomIntFromInterval(0, 10);
-  if (random > 5) {
-    previewUrl = 'https://images.contentstack.io/v3/assets/bltb6904bc276687b34/blt41733d50ccf59e95/66f5f68666be4a74abdd633b/66f5f677f9d9d6a198c2a955-preview.png';
-  }
-
+  const urls = await fetchUrls(session.get('accessToken') as string, session.get('organizationUid') as string, launchEnvUid as string, launchProjectUid as string);
   return {
-    previewUrl,
-    environmentUrl: 'https://portfolio.contentstackapps.com',
+    previewUrl: urls.previewUrl,
+    environmentUrl: urls.deploymentUrl,
     stackUrl,
     launchProjectUrl,
   };
-}
-
-function randomIntFromInterval(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
 }
