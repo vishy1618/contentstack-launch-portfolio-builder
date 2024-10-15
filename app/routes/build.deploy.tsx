@@ -7,7 +7,7 @@ import {
   redirectDocument,
   useLoaderData,
 } from '@remix-run/react';
-import { fetchDeploymentStatus } from '~/launch-repository';
+import {fetchDeploymentDetails } from '~/launch-repository';
 
 enum LaunchProjectState {
   NOT_DEPLOYED,
@@ -23,7 +23,7 @@ const TEXT_FOR_STATE: Record<LaunchProjectState, string> = {
   [LaunchProjectState.ERROR]: '❗There was an error deploying the project. Please contact someone from the Contentstack booth.',
 };
 
-const AVERAGE_DURATION_FOR_DEPLOYMENT_SECONDS = 180;
+const AVERAGE_DURATION_FOR_DEPLOYMENT_SECONDS = 130;
 const POLLING_INTERVAL_SECONDS = 5;
 
 export default function Deploy() {
@@ -71,7 +71,6 @@ function calculatePercentage(state: LaunchProjectState, duration: number) {
   return 0;
 }
 
-let tempDuration = 0;
 
 export async function loader({ request }: { request: Request }) {
   const session = await getSession(
@@ -85,8 +84,12 @@ export async function loader({ request }: { request: Request }) {
 
     const launchProjectUid = session.get('launchProjectDetails')?.projectUid;
     const launchEnvUid = session.get('launchProjectDetails')?.environmentUid;
+    const deploymentUid = session.get('launchProjectDetails')?.deploymentUid;
 
-    const status = await fetchDeploymentStatus(session.get('accessToken') as string, session.get('organizationUid') as string, launchEnvUid as string, launchProjectUid as string);
+    const {
+      status,
+      createdAt,
+    } = await fetchDeploymentDetails(session.get('accessToken') as string, session.get('organizationUid') as string, launchEnvUid as string, launchProjectUid as string, deploymentUid as string);
     if (status === 'LIVE') {
       state = LaunchProjectState.LIVE;
 
@@ -94,8 +97,10 @@ export async function loader({ request }: { request: Request }) {
     }
     if (status === 'ERROR') {
       state = LaunchProjectState.ERROR;
-      return;
     }
+    const duration = Math.floor((new Date().getTime() - createdAt.getTime())/1000);
+    return { state, duration }; 
   }
-    return { state, duration: tempDuration+=POLLING_INTERVAL_SECONDS };
+
+  return {state};
 }
