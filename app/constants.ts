@@ -10,3 +10,4 @@ export const TOKEN_URL = `${CONTENTSTACK_APP_URL}/apps-api/apps/token`;
 export const LAUNCH_PROJECT_THEMES = ['light', 'dark', 'mint', 'dust', 'water'];
 export const STACK_ENVIRONMENT = 'production';
 export const PORTFOLIO_CONTENT_TYPE_UID = 'portfolio';
+export const PORTFOLIO_DP_DIRECTORY = '/tmp';

@@ -20,8 +20,8 @@ import {
   useActionData,
   useNavigation,
 } from '@remix-run/react';
-import { createPortfolioContentType, createDeliveryTokenForEnvironment, createEntryForPortfolioContentType, createEnvironment, createPortfolioWebsiteStack, QuestionAnswers } from '~/stack-repository';
-import { PORTFOLIO_CONTENT_TYPE_UID, STACK_ENVIRONMENT } from '~/constants';
+import { createPortfolioContentType, createDeliveryTokenForEnvironment, createEntryForPortfolioContentType, createEnvironment, createPortfolioWebsiteStack, QuestionAnswers, uploadFileToAssets } from '~/stack-repository';
+import { PORTFOLIO_CONTENT_TYPE_UID, PORTFOLIO_DP_DIRECTORY, STACK_ENVIRONMENT } from '~/constants';
 
 const SUBMIT_QUESTIONS = 'SUBMIT_QUESTIONS';
 const FIVE_MB = 5242880;
@@ -192,14 +192,22 @@ export async function action({ request }: { request: Request }) {
   const session = await getSession(
     request.headers.get('Cookie')
   );
+  let assetFileName = '';
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: FIVE_MB,
-      file: ({ filename }) => filename,
+      file: ({ filename }) => {
+        console.log('filename', filename);
+        assetFileName = `${PORTFOLIO_DP_DIRECTORY}/${filename}`;
+        return filename;
+      },
+      directory: PORTFOLIO_DP_DIRECTORY,
     }),
+
     // parse everything else into memory
     unstable_createMemoryUploadHandler(),
   );
+  console.log('assetFileName', assetFileName);
   const formData = await unstable_parseMultipartFormData(
     request,
     uploadHandler,
@@ -222,7 +230,7 @@ export async function action({ request }: { request: Request }) {
         name: formData.get('name') as string,
         designation: formData.get('designation') as string,
         description: formData.get('description') as string,
-        // dp?: File; // TODO
+        dp: assetFileName,
         x: formData.get('x') as string,
         linkedin: formData.get('linkedin') as string,
         github: formData.get('github') as string,
@@ -233,14 +241,16 @@ export async function action({ request }: { request: Request }) {
       
       // create content type
       // create environment
-      await Promise.all([
+      // save asset
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [ , , assetUid ] = await Promise.all([
         createPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid),
         createEnvironment(accessToken, apiKey, environmentName),
+        uploadFileToAssets(accessToken, apiKey, portfolioQuestionsAnswers.dp),
       ]);
 
       // create delivery token
       // create entry
-      // save asset
       const [ deliveryToken, entryUid ] = await Promise.all([
         createDeliveryTokenForEnvironment(accessToken, apiKey, environmentName),
         createEntryForPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid, environmentName, portfolioQuestionsAnswers),
@@ -255,7 +265,7 @@ export async function action({ request }: { request: Request }) {
       const contentDetails: ContentTypeDetails = {
         contentType: portfolioContentTypeUid,
         entryUid,
-        assetUid: 'WIP',
+        assetUid,
       };
 
       session.set('progress', SessionProgress.DEPLOYMENT);
