@@ -296,7 +296,7 @@ export async function createDeliveryTokenForEnvironment(
   return deliveryToken;
 }
 
-export async function uploadFileToAssets(
+export async function uploadDPFileToAssets(
   accessToken: string,
   apiKey: string,
   dpFilePath: string
@@ -305,11 +305,7 @@ export async function uploadFileToAssets(
   let assetUid = '';
 
   const formData = new FormData();
-  console.log('Before appending file');
   formData.append("asset[upload]", fs.createReadStream(dpFilePath));
-  console.log('After appending file');
-
-  // console.log(JSON.stringify(dp));
 
   const headers = {
     ...formData.getHeaders(),
@@ -326,7 +322,7 @@ export async function uploadFileToAssets(
         headers,
       }
     );
-    console.log("Response from Asset APi", response.data);
+
     console.log("Asset uploaded successfully");
     assetUid = response.data.asset.uid;
   } catch (error) {
@@ -342,6 +338,7 @@ export async function createEntryForPortfolioContentType(
   apiKey: string,
   contentTypeUid: string,
   environmentName: string,
+  dpAssetUid: string,
   questionAnswers: QuestionAnswers
 ): Promise<string> {
   console.log("Creating Entry");
@@ -357,6 +354,7 @@ export async function createEntryForPortfolioContentType(
       name: questionAnswers.name,
       designation: questionAnswers.designation,
       description: questionAnswers.description,
+      dp: dpAssetUid,
       linkedin: questionAnswers.linkedin,
       github: questionAnswers.github,
       x: questionAnswers.x,

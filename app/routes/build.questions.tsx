@@ -20,7 +20,7 @@ import {
   useActionData,
   useNavigation,
 } from '@remix-run/react';
-import { createPortfolioContentType, createDeliveryTokenForEnvironment, createEntryForPortfolioContentType, createEnvironment, createPortfolioWebsiteStack, QuestionAnswers, uploadFileToAssets } from '~/stack-repository';
+import { createPortfolioContentType, createDeliveryTokenForEnvironment, createEntryForPortfolioContentType, createEnvironment, createPortfolioWebsiteStack, QuestionAnswers, uploadDPFileToAssets } from '~/stack-repository';
 import { PORTFOLIO_CONTENT_TYPE_UID, PORTFOLIO_DP_DIRECTORY, STACK_ENVIRONMENT } from '~/constants';
 
 const SUBMIT_QUESTIONS = 'SUBMIT_QUESTIONS';
@@ -243,17 +243,17 @@ export async function action({ request }: { request: Request }) {
       // create environment
       // save asset
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [ , , assetUid ] = await Promise.all([
+      const [ , , dpAssetUid ] = await Promise.all([
         createPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid),
         createEnvironment(accessToken, apiKey, environmentName),
-        uploadFileToAssets(accessToken, apiKey, portfolioQuestionsAnswers.dp),
+        uploadDPFileToAssets(accessToken, apiKey, portfolioQuestionsAnswers.dp),
       ]);
 
       // create delivery token
       // create entry
       const [ deliveryToken, entryUid ] = await Promise.all([
         createDeliveryTokenForEnvironment(accessToken, apiKey, environmentName),
-        createEntryForPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid, environmentName, portfolioQuestionsAnswers),
+        createEntryForPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid, environmentName, dpAssetUid, portfolioQuestionsAnswers),
       ]);
 
       const stackDetails: StackDetails = {
@@ -265,7 +265,7 @@ export async function action({ request }: { request: Request }) {
       const contentDetails: ContentTypeDetails = {
         contentType: portfolioContentTypeUid,
         entryUid,
-        assetUid,
+        assetUid: dpAssetUid,
       };
 
       session.set('progress', SessionProgress.DEPLOYMENT);
