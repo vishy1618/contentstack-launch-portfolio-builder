@@ -23,7 +23,11 @@ export default function Build() {
       <h2 className="sr-only">Steps</h2>
       <header className="flex flex-col gap-9 my-10">
         <h1 className="leading text-2xl font-bold text-gray-800">
-          Contentstack Portfolio Builder
+        <a href="https://www.contentstack.com/docs/" className='inline-flex'>
+          <img className="ms-2" src="https://images.contentstack.io/v3/assets/blt7359e2a55efae483/blt518e5105a0686696/663e30a08f19535905e50af2/Logo.svg" alt="cs-icon.svg"/>
+          &nbsp;
+          <span className='text-[21px] uppercase font-bold'>Portfolio Builder</span>
+        </a>
 
           <Form method="post" className="float-right">
             <button
