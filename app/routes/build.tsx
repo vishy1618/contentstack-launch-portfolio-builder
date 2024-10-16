@@ -3,10 +3,8 @@ import {
   getSession,
 } from '~/sessions';
 
-import { HeadersFunction } from '@remix-run/node';
 import {
   Form,
-  json,
   Outlet,
   redirect,
   useLoaderData,
@@ -91,10 +89,6 @@ export default function Build() {
   );
 }
 
-export let headers: HeadersFunction = ({ loaderHeaders }) => {
-  return { "Cache-Control": loaderHeaders.get("Cache-Control") as string }
-}
-
 export async function loader({ request }: { request: Request }) {
   const session = await getSession(
     request.headers.get("Cookie")
@@ -106,13 +100,9 @@ export async function loader({ request }: { request: Request }) {
     return redirect('/build/questions');
   }
 
-  return json({
+  return {
     pathname: new URL(request.url).pathname,
-  }, {
-    headers: {
-      'Cache-Control': 'no-store',
-    }
-  });
+  };
 }
 
 export async function action({ request }: { request: Request }) {

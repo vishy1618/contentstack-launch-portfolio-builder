@@ -3,7 +3,6 @@ import { getSession } from '~/sessions';
 
 import {
   Form,
-  json,
   redirect,
 } from '@remix-run/react';
 
@@ -58,11 +57,7 @@ export async function loader({ request }: { request: Request }) {
     return redirect('/build');
   }
 
-  return json(null, {
-    headers: {
-      'Cache-Control': 'no-store',
-    }
-  });
+  return null;
 }
 
 export async function action({ request }: { request: Request }) {
