@@ -4,13 +4,20 @@
  * For more information, see https://remix.run/file-conventions/entry.server
  */
 
-import { PassThrough } from "node:stream";
+import { PassThrough } from 'node:stream';
 
-import type { AppLoadContext, EntryContext } from "@remix-run/node";
-import { createReadableStreamFromReadable, installGlobals } from "@remix-run/node";
-import { RemixServer } from "@remix-run/react";
-import { isbot } from "isbot";
-import { renderToPipeableStream } from "react-dom/server";
+import { isbot } from 'isbot';
+import { renderToPipeableStream } from 'react-dom/server';
+
+import type {
+  AppLoadContext,
+  EntryContext,
+} from '@remix-run/node';
+import {
+  createReadableStreamFromReadable,
+  installGlobals,
+} from '@remix-run/node';
+import { RemixServer } from '@remix-run/react';
 
 const ABORT_DELAY = 5_000;
 installGlobals();
@@ -26,17 +33,17 @@ export default function handleRequest(
 ) {
   return isbot(request.headers.get("user-agent") || "")
     ? handleBotRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      )
+      request,
+      responseStatusCode,
+      responseHeaders,
+      remixContext
+    )
     : handleBrowserRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      );
+      request,
+      responseStatusCode,
+      responseHeaders,
+      remixContext
+    );
 }
 
 function handleBotRequest(
@@ -110,6 +117,7 @@ function handleBrowserRequest(
           const stream = createReadableStreamFromReadable(body);
 
           responseHeaders.set("Content-Type", "text/html");
+          responseHeaders.set("Cache-Control", "no-store");
 
           resolve(
             new Response(stream, {
