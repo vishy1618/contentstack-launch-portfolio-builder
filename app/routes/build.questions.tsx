@@ -36,7 +36,7 @@ import {
 } from '@remix-run/react';
 
 const SUBMIT_QUESTIONS = 'SUBMIT_QUESTIONS';
-const FIVE_HUNDRED_KB = 524288;
+const THREE_MB = 3145728;
 const MAX_NAME_LENGTH = 200;
 const MAX_DESIGNATION_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 500;
@@ -48,7 +48,7 @@ export default function Questions() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validateFileSize = (event: any) => {
-    if (event.target.files[0].size > FIVE_HUNDRED_KB) {
+    if (event.target.files[0].size > THREE_MB) {
       event.target.value = '';
       alert('Please select a display picture smaller than 500 KB in size');
       return false;
@@ -107,7 +107,7 @@ export default function Questions() {
           className="w-full rounded-lg border-gray-200 p-3 text-sm"
           placeholder="Display Picture"
           type="file"
-          accept=".jpg,.png"
+          accept="image/*;capture=camera"
           id="dp"
           name="dp"
           onChange={validateFileSize}
@@ -207,7 +207,7 @@ export async function action({ request }: { request: Request }) {
   let assetFileName = '';
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
-      maxPartSize: FIVE_HUNDRED_KB,
+      maxPartSize: THREE_MB,
       file: ({ filename }) => {
         console.log('filename', filename);
         assetFileName = `${PORTFOLIO_DP_DIRECTORY}/${filename}`;
