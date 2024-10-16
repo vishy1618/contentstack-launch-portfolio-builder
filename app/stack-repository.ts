@@ -1,7 +1,8 @@
+import axios from 'axios';
+import FormData from 'form-data';
+import fs from 'fs';
+
 import { CONTENTSTACK_API_URL } from './constants';
-import FormData from "form-data";
-import axios from "axios";
-import fs from "fs";
 
 export type QuestionAnswers = {
   name: string;
@@ -474,6 +475,8 @@ async function publishAsset(
       requestOptions
     );
     const result = await response.json();
+    console.log(`Asset publishing response: ${JSON.stringify(result)}`);
+    console.log(`Asset details: ${assetUid} to ${environmentName}`);
     if (!response.ok) {
       throw result;
     }
