@@ -1,6 +1,6 @@
-export const CONTENTSTACK_APP_URL = 'https://app.contentstack.com';
-export const CONTENTSTACK_API_URL = 'https://api.contentstack.io';
-export const CONTENTSTACK_LAUNCH_API_URL = 'https://launch-api.contentstack.com';
+export const CONTENTSTACK_APP_URL = 'https://eu-app.contentstack.com';
+export const CONTENTSTACK_API_URL = 'https://eu-api.contentstack.com';
+export const CONTENTSTACK_LAUNCH_API_URL = 'https://eu-launch-api.contentstack.com';
 export const CONTENTSTACK_APP_UID = process.env.CONTENTSTACK_APP_UID;
 export const CONTENTSTACK_APP_CLIENT_ID = process.env.CONTENTSTACK_APP_CLIENT_ID;
 export const CONTENTSTACK_APP_CLIENT_SECRET = process.env.CONTENTSTACK_APP_CLIENT_SECRET;
