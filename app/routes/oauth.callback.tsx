@@ -10,6 +10,7 @@ import {
   SessionProgress,
 } from '~/sessions';
 
+import { HeadersFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/react';
 
 export default function OAuthCallback() {
@@ -18,6 +19,10 @@ export default function OAuthCallback() {
       Loading...
     </p>
   )
+}
+
+export let headers: HeadersFunction = ({ loaderHeaders }) => {
+  return { "Cache-Control": loaderHeaders.get("Cache-Control") as string }
 }
 
 export async function loader({ request }: { request: any }) {
@@ -37,6 +42,7 @@ export async function loader({ request }: { request: any }) {
   return redirect('/', {
     headers: {
       "Set-Cookie": await commitSession(session),
+      "Cache-Control": "no-store",
     }
   });
 }

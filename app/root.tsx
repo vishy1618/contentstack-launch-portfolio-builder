@@ -1,6 +1,7 @@
 import './tailwind.css';
 
 import type {
+  HeadersFunction,
   LinksFunction,
   MetaFunction,
 } from '@remix-run/node';
@@ -52,4 +53,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
+}
+
+export let headers: HeadersFunction = ({ loaderHeaders }) => {
+  return { "Cache-Control": "no-store" }
 }
