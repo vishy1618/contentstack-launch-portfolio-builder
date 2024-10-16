@@ -1,3 +1,8 @@
+import {
+  PORTFOLIO_CONTENT_TYPE_UID,
+  PORTFOLIO_DP_DIRECTORY,
+  STACK_ENVIRONMENT,
+} from '~/constants';
 /* eslint-disable no-case-declarations */
 import {
   commitSession,
@@ -6,6 +11,15 @@ import {
   SessionProgress,
   StackDetails,
 } from '~/sessions';
+import {
+  createDeliveryTokenForEnvironment,
+  createEntryForPortfolioContentType,
+  createEnvironment,
+  createPortfolioContentType,
+  createPortfolioWebsiteStack,
+  QuestionAnswers,
+  uploadDPFileToAssets,
+} from '~/stack-repository';
 
 import {
   json,
@@ -20,11 +34,9 @@ import {
   useActionData,
   useNavigation,
 } from '@remix-run/react';
-import { createPortfolioContentType, createDeliveryTokenForEnvironment, createEntryForPortfolioContentType, createEnvironment, createPortfolioWebsiteStack, QuestionAnswers, uploadDPFileToAssets } from '~/stack-repository';
-import { PORTFOLIO_CONTENT_TYPE_UID, PORTFOLIO_DP_DIRECTORY, STACK_ENVIRONMENT } from '~/constants';
 
 const SUBMIT_QUESTIONS = 'SUBMIT_QUESTIONS';
-const FIVE_MB = 5242880;
+const THREE_MB = 3145728;
 const MAX_NAME_LENGTH = 200;
 const MAX_DESIGNATION_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 500;
@@ -36,7 +48,7 @@ export default function Questions() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validateFileSize = (event: any) => {
-    if (event.target.files[0].size > FIVE_MB) {
+    if (event.target.files[0].size > THREE_MB) {
       event.target.value = '';
       alert('Please select a display picture smaller than 5 MB in size');
       return false;
@@ -195,7 +207,7 @@ export async function action({ request }: { request: Request }) {
   let assetFileName = '';
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
-      maxPartSize: FIVE_MB,
+      maxPartSize: THREE_MB,
       file: ({ filename }) => {
         console.log('filename', filename);
         assetFileName = `${PORTFOLIO_DP_DIRECTORY}/${filename}`;
@@ -238,12 +250,12 @@ export async function action({ request }: { request: Request }) {
 
       // create stack
       const apiKey = await createPortfolioWebsiteStack(accessToken, organizationUid);
-      
+
       // create content type
       // create environment
       // save asset
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [ , , dpAssetUid ] = await Promise.all([
+      const [, , dpAssetUid] = await Promise.all([
         createPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid),
         createEnvironment(accessToken, apiKey, environmentName),
         uploadDPFileToAssets(accessToken, apiKey, portfolioQuestionsAnswers.dp, environmentName),
@@ -251,7 +263,7 @@ export async function action({ request }: { request: Request }) {
 
       // create delivery token
       // create entry
-      const [ deliveryToken, entryUid ] = await Promise.all([
+      const [deliveryToken, entryUid] = await Promise.all([
         createDeliveryTokenForEnvironment(accessToken, apiKey, environmentName),
         createEntryForPortfolioContentType(accessToken, apiKey, portfolioContentTypeUid, environmentName, dpAssetUid, portfolioQuestionsAnswers),
       ]);
