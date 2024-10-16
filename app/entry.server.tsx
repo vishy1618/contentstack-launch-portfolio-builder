@@ -10,8 +10,10 @@ import { isbot } from 'isbot';
 import { renderToPipeableStream } from 'react-dom/server';
 
 import type {
+  ActionFunctionArgs,
   AppLoadContext,
   EntryContext,
+  LoaderFunctionArgs,
 } from '@remix-run/node';
 import {
   createReadableStreamFromReadable,
@@ -145,4 +147,17 @@ function handleBrowserRequest(
 
     setTimeout(abort, ABORT_DELAY);
   });
+}
+
+
+export function handleDataRequest(
+  response: Response,
+  {
+    request,
+    params,
+    context,
+  }: LoaderFunctionArgs | ActionFunctionArgs
+) {
+  response.headers.set("Cache-Control", "no-store");
+  return response;
 }
