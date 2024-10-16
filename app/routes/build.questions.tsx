@@ -36,7 +36,7 @@ import {
 } from '@remix-run/react';
 
 const SUBMIT_QUESTIONS = 'SUBMIT_QUESTIONS';
-const THREE_MB = 3145728;
+const FIVE_HUNDRED_KB = 524288;
 const MAX_NAME_LENGTH = 200;
 const MAX_DESIGNATION_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 500;
@@ -48,9 +48,9 @@ export default function Questions() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validateFileSize = (event: any) => {
-    if (event.target.files[0].size > THREE_MB) {
+    if (event.target.files[0].size > FIVE_HUNDRED_KB) {
       event.target.value = '';
-      alert('Please select a display picture smaller than 5 MB in size');
+      alert('Please select a display picture smaller than 500 KB in size');
       return false;
     }
   };
@@ -207,7 +207,7 @@ export async function action({ request }: { request: Request }) {
   let assetFileName = '';
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
-      maxPartSize: THREE_MB,
+      maxPartSize: FIVE_HUNDRED_KB,
       file: ({ filename }) => {
         console.log('filename', filename);
         assetFileName = `${PORTFOLIO_DP_DIRECTORY}/${filename}`;
