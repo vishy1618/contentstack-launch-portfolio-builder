@@ -22,13 +22,10 @@ export default function Build() {
     <div className="container mx-10 my-10">
       <h2 className="sr-only">Steps</h2>
       <header className="flex flex-col gap-9 my-10">
-        <h1 className="leading text-2xl font-bold text-gray-800">
-        <a href="https://www.contentstack.com/docs/" className='inline-flex'>
-          <img className="ms-2" src="https://images.contentstack.io/v3/assets/blt7359e2a55efae483/blt518e5105a0686696/663e30a08f19535905e50af2/Logo.svg" alt="cs-icon.svg"/>
-          &nbsp;
-          <span className='text-[21px] uppercase font-bold'>Portfolio Builder</span>
-        </a>
-
+        <h1 className="leading">
+          <a href="https://www.contentstack.com/docs/" className='inline-flex'>
+            <img className="ms-2" src="https://images.contentstack.io/v3/assets/blt7359e2a55efae483/blt518e5105a0686696/663e30a08f19535905e50af2/Logo.svg" alt="cs-icon.svg"/>
+          </a>
           <Form method="post" className="float-right">
             <button
               className="underline hover:text-blue-500 font-medium text-sm"
@@ -38,6 +35,7 @@ export default function Build() {
               Logout
             </button>
           </Form>
+          <h2 className='text-[21px] uppercase font-bold'>Portfolio Builder</h2>
         </h1>
       </header>
 

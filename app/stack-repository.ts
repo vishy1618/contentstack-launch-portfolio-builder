@@ -331,7 +331,7 @@ export async function uploadDPFileToAssets(
     console.error("Error uploading asset:", error);
     throw error;
   }
-
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   await publishAsset(accessToken, apiKey, environmentName, assetUid);
 
   return assetUid;

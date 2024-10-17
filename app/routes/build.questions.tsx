@@ -102,7 +102,7 @@ export default function Questions() {
       </div>
 
       <div>
-        <label htmlFor="dp">Display Picture</label>
+        <label htmlFor="dp" className='ms-2'>Display Picture</label>
         <input
           className="w-full rounded-lg border-gray-200 p-3 text-sm"
           placeholder="Display Picture"
