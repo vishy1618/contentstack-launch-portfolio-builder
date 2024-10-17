@@ -125,7 +125,7 @@ async function createLaunchProject(accessToken: string, organizationUid: string,
           projectType: "FILEUPLOAD",
           environment: {
             name: "Default",
-            frameworkPreset: "OTHER",
+            frameworkPreset: "REMIX",
             buildCommand: "npm run build",
             outputDirectory: "./build",
             environmentVariables: [
