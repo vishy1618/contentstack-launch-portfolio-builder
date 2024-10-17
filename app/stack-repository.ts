@@ -28,7 +28,7 @@ export async function createPortfolioWebsiteStack(
 
   const stackCreateBody = JSON.stringify({
     stack: {
-      name: 'Portfolio Website 5',
+      name: 'Portfolio Website',
       description: 'Portfolio website content from React India 2024 conference',
       master_locale: 'en-us',
     },

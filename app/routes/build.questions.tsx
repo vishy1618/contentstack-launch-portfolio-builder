@@ -110,6 +110,7 @@ export default function Questions() {
           accept="image/*;capture=camera"
           id="dp"
           name="dp"
+          required={true}
           onChange={validateFileSize}
         />
         {actionData?.errors?.dp ? (
