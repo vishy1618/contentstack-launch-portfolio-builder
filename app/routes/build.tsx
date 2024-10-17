@@ -35,7 +35,7 @@ export default function Build() {
               Logout
             </button>
           </Form>
-          <h2 className='text-[21px] uppercase font-bold'>Portfolio Builder</h2>
+          <h2 className='text-[21px] uppercase font-bold text-center'>Portfolio Builder</h2>
         </h1>
       </header>
 
