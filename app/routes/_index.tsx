@@ -41,8 +41,8 @@ export default function Index() {
               value={LOGIN_ACTION}>
               Authorize
             </button>
-            <a className='text-blue-400 hover:underline' rel='noreferrer' href="https://www.contentstack.com/explorerindia" target='_blank'>
-              First register yourself for free with Contentstack Explorer India
+            <a className='px-8 text-blue-400 hover:underline text-center' rel='noreferrer' href="https://www.contentstack.com/explorerindia" target='_blank'>
+              First register yourself for free with Contentstack Explorer India by clicking here
             </a>
           </nav>
         </Form>
