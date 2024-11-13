@@ -61,6 +61,8 @@ async function getToken(code: string) {
   );
   const responseJSON = await response.json();
   if (!response.ok) {
+    console.log('Debug: Body:', JSON.stringify(body));
+    console.error(JSON.stringify(responseJSON));
     throw new Error(JSON.stringify(responseJSON));
   }
   const { access_token, refresh_token, organization_uid } = responseJSON;
