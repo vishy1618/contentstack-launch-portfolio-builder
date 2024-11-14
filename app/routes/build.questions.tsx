@@ -1,8 +1,10 @@
 import {
   PORTFOLIO_CONTENT_TYPE_UID,
-  PORTFOLIO_DP_DIRECTORY,
+  PORTFOLIO_DP_DIRECTORY_ROOT,
   STACK_ENVIRONMENT,
 } from '~/constants';
+import path from 'path';
+
 /* eslint-disable no-case-declarations */
 import {
   commitSession,
@@ -205,16 +207,20 @@ export async function action({ request }: { request: Request }) {
   const session = await getSession(
     request.headers.get('Cookie')
   );
+  const accessToken = session.get('accessToken') as string;
+  const organizationUid = session.get('organizationUid') as string;
+
   let assetFileName = '';
+  const portfolioDPDirectory = path.join(PORTFOLIO_DP_DIRECTORY_ROOT, accessToken);
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: THREE_MB,
       file: ({ filename }) => {
         console.log('filename', filename);
-        assetFileName = `${PORTFOLIO_DP_DIRECTORY}/${filename}`;
+        assetFileName = `${portfolioDPDirectory}/${filename}`;
         return filename;
       },
-      directory: PORTFOLIO_DP_DIRECTORY,
+      directory: portfolioDPDirectory,
     }),
 
     // parse everything else into memory
@@ -234,8 +240,7 @@ export async function action({ request }: { request: Request }) {
         return json({ errors });
       }
 
-      const accessToken = session.get('accessToken') as string;
-      const organizationUid = session.get('organizationUid') as string;
+
       const environmentName = STACK_ENVIRONMENT;
       const portfolioContentTypeUid = PORTFOLIO_CONTENT_TYPE_UID;
 
