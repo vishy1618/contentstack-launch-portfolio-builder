@@ -34,7 +34,7 @@ export default function Index() {
             Contentstack Portfolio Builder
           </h1>
           <p className="text-gray-600 text-center max-w-md">
-            Create your professional portfolio in minutes with our easy-to-use builder
+            Create your professional portfolio in minutes with our easy-to-use builder, deployed using <a href="https://www.contentstack.com/docs/developers/launch" target='_blank' rel='noreferrer' className='text-[#2D57E8] hover:underline'>Launch</a>
           </p>
         </header>
         
