@@ -10,44 +10,57 @@ const LOGIN_ACTION = 'LOGIN_ACTION';
 
 export default function Index() {
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="flex flex-col items-center gap-16">
-        <header className="flex flex-col items-center gap-9">
-          <span className="flex justify-start items-center">
+    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-[#2D57E8] via-[#6C1D5F] to-[#2D57E8]">
+      <div className="flex flex-col items-center gap-12 max-w-2xl p-8 rounded-2xl shadow-lg bg-white backdrop-blur-md">
+        <header className="flex flex-col items-center gap-8">
+          <div className="flex justify-center items-center space-x-8">
             <img
               src="/react-india.svg"
               alt="React India Logo"
-              className="m-5"
+              className="h-16 object-contain"
             />
             <img
               src="/contentstack.png"
               alt="Contentstack Logo"
+              className="h-16 object-contain"
             />
             <img
               src="/launch.png"
               alt="Launch Logo"
+              className="h-16 object-contain"
             />
-          </span>
-          <h1 className="leading text-2xl font-bold text-gray-800">
+          </div>
+          <h1 className="text-4xl font-bold text-gray-800 text-center">
             Contentstack Portfolio Builder
           </h1>
+          <p className="text-gray-600 text-center max-w-md">
+            Create your professional portfolio in minutes with our easy-to-use builder, deployed using <a href="https://www.contentstack.com/docs/developers/launch" target='_blank' rel='noreferrer' className='text-[#2D57E8] hover:underline'>Launch</a>
+          </p>
         </header>
-        <Form method="post">
-          <nav className="flex flex-col items-center justify-center">
+        
+        <div className="flex flex-col gap-4 w-full max-w-md">
+          <a 
+            href="https://www.contentstack.com/explorerindia" 
+            target='_blank' 
+            rel='noreferrer'
+            className="w-full px-6 py-3 text-center text-white bg-gradient-to-r from-[#2D57E8] to-[#6C1D5F] hover:from-[#2042c0] hover:to-[#521748] rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            Register for Explorer India
+          </a>
+          
+          <Form method="post">
             <button
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
               type="submit"
               name="action"
-              value={LOGIN_ACTION}>
-              Authorize
+              value={LOGIN_ACTION}
+              className="w-full px-6 py-3 text-center text-[#2D57E8] bg-white border-2 border-[#2D57E8] hover:bg-blue-50 rounded-lg font-medium transition-all duration-200"
+            >
+              Create Portfolio
             </button>
-            <a className='px-8 text-blue-400 hover:underline text-center' rel='noreferrer' href="https://www.contentstack.com/explorerindia" target='_blank'>
-              First register yourself for free with Contentstack Explorer India by clicking here
-            </a>
-          </nav>
-        </Form>
+          </Form>
+        </div>
       </div>
-    </div >
+    </div>
   );
 }
 
